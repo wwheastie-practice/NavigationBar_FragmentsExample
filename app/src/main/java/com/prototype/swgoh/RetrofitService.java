@@ -11,15 +11,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class AppRetrofitService extends AsyncTask<Void, Void, List<Character>> {
+public class RetrofitService extends AsyncTask<Void, Void, List<Character>> {
 
-    final String TAG = "swgoh.gg";
-    final String BASE_URL = "https://swgoh.gg/";
-    List<Character> characters;
-    Retrofit mRetrofit;
-    GameDataAPIService mAPIService;
+    private static final String TAG = "RetrofitService";
+    private static final String BASE_URL = "https://swgoh.gg/";
+    private List<Character> mCharacters;
+    private Retrofit mRetrofit;
+    private GameDataAPIService mAPIService;
 
-    public AppRetrofitService() {
+    public RetrofitService() {
         initialize();
     }
 
@@ -50,17 +50,17 @@ public class AppRetrofitService extends AsyncTask<Void, Void, List<Character>> {
             @Override
             public void onResponse(Call<List<Character>> call, Response<List<Character>> response) {
                 Log.d(TAG, "Response Successful");
-                characters = response.body();
+                mCharacters = response.body();
             }
 
             @Override
             public void onFailure(Call<List<Character>> call, Throwable t) {
                 Log.d(TAG, "Response Failed");
-                characters = null;
+                mCharacters = null;
             }
         });
 
-        return characters;
+        return mCharacters;
     }
 
     private List<Character> getAllCharactersSync() {

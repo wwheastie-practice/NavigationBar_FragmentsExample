@@ -1,16 +1,18 @@
 package com.prototype.swgoh;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
-public class RealmDBSetup {
+public class RealmDatabaseService {
 
-    Realm mRealm;
-    RealmList<Character> mCharacters = new RealmList<>();
+    private Realm mRealm;
+    private RealmList<Character> mCharacters = new RealmList<>();
 
-    public RealmDBSetup() {
+    public RealmDatabaseService() {
         mRealm = Realm.getDefaultInstance();
     }
 
@@ -19,6 +21,20 @@ public class RealmDBSetup {
             retrieveAllCharactersFromAPI();
             writeToDatabase();
         }
+    }
+
+    public ArrayList<Character> retrieveAllCharactersFromDatabase() {
+        final ArrayList<Character> characters = new ArrayList<>();
+
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Character> results = realm.where(Character.class).findAll();
+                characters.addAll(results);
+            }
+        });
+
+        return characters;
     }
 
     private void writeToDatabase() {
@@ -33,7 +49,7 @@ public class RealmDBSetup {
     }
 
     private void retrieveAllCharactersFromAPI() {
-        AppRetrofitService service = new AppRetrofitService();
+        RetrofitService service = new RetrofitService();
 
         try {
             mCharacters.addAll(service.execute().get());
