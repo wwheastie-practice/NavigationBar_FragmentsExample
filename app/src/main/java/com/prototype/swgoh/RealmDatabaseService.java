@@ -3,6 +3,7 @@ package com.prototype.swgoh;
 import java.io.File;
 import java.util.ArrayList;
 
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -37,12 +38,28 @@ public class RealmDatabaseService {
         return characters;
     }
 
+    public ArrayList<Character> retrieveCharactersByName(String userInput) {
+        final String wildCardSearch = "*" +  userInput + "*";
+        final ArrayList<Character> characters = new ArrayList<>();
+
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Character> results = realm.where(Character.class).like("name", wildCardSearch, Case.INSENSITIVE).findAll();
+                characters.addAll(results);
+            }
+        });
+
+        return characters;
+    }
+
     private void writeToDatabase() {
         if(mCharacters != null) {
             mRealm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    insertCharacterWithId(realm);
+                    realm.insert(mCharacters);
+                    //insertCharacterWithId(realm);
                 }
             });
         }
@@ -58,13 +75,13 @@ public class RealmDatabaseService {
         }
     }
 
-    private void insertCharacterWithId(Realm realm) {
-        int id = 0;
-
-        for(Character character : mCharacters) {
-            character.setId(id++);
-            realm.insert(character);
-        }
-    }
+//    private void insertCharacterWithId(Realm realm) {
+//        int id = 0;
+//
+//        for(Character character : mCharacters) {
+//            character.setId(id++);
+//            realm.insert(character);
+//        }
+//    }
 
 }

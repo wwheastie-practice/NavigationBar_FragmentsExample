@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterRecyclerViewAdapter extends RecyclerView.Adapter<CharacterListItemViewHolder> {
@@ -40,6 +41,12 @@ public class CharacterRecyclerViewAdapter extends RecyclerView.Adapter<Character
         return mCharacters.size();
     }
 
+    public void updateCharacterList(List<Character> queryCharacters) {
+        mCharacters = new ArrayList<>();
+        mCharacters.addAll(queryCharacters);
+        notifyDataSetChanged();
+    }
+
     private void setViewHolder(Character character, CharacterListItemViewHolder viewHolder) {
         setCharacterImageViewWithURL(character, viewHolder);
         setCharacterDisplayInformation(character, viewHolder);
@@ -57,6 +64,7 @@ public class CharacterRecyclerViewAdapter extends RecyclerView.Adapter<Character
         viewHolder.mName.setText(character.getName());
         viewHolder.mDescription.setText(character.getDescription());
         viewHolder.mCategories.setText(setCharacterCategoriesIntoSingleString(character));
+        viewHolder.setImageBorderByAlignment(character.getAlignment());
     }
 
     private String setCharacterCategoriesIntoSingleString(Character character) {
