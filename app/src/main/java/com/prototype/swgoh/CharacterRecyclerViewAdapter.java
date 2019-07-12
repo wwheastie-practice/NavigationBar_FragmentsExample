@@ -1,7 +1,12 @@
 package com.prototype.swgoh;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,7 +90,19 @@ public class CharacterRecyclerViewAdapter extends RecyclerView.Adapter<Character
         viewHolder.mParentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, character.getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, character.getName(), Toast.LENGTH_SHORT).show();
+//                View view = View.inflate(mContext, R.layout.activity_main, null);
+//                Activity activity = new Activity();
+//                FragmentActivity fragmentActivity = new FragmentActivity();
+//                fragmentActivity.getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.main_frame, new OtherFragment())
+//                        .commit();
+                Fragment fragment = new OtherFragment();
+                FragmentManager fragmentManager = ((MainActivity)mContext).getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_frame, new OtherFragment())
+                        .commit();
             }
         });
     }

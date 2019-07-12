@@ -2,75 +2,46 @@ package com.prototype.swgoh;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.support.annotation.Nullable;
+import android.support.design.behavior.HideBottomViewOnScrollBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity {
+public class CharacterListFragment extends Fragment {
 
-    public BottomNavigationView navigationView;
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        //init();
-        navigationView = findViewById(R.id.main_navigation);
-        loadFragment(new CharacterListFragment());
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-                Fragment fragment = null;
-
-                switch (menuItem.getItemId()) {
-                    case R.id.units:
-                        fragment = new CharacterListFragment();
-                        break;
-                    default:
-                        fragment = new TempFragment();
-                }
-
-                return loadFragment(fragment);
-            }
-        });
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.character_list, container, false);
+        init(view);
+        return view;
     }
 
-    public boolean loadFragment(Fragment fragment) {
-        if(fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main_frame, fragment)
-                    .commit();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private void init() {
+    private void init(View view) {
         databaseSetup();
-        viewsSetup();
+        viewsSetup(view);
     }
 
     private void databaseSetup() {
-        Realm.init(this);
+        Realm.init(getActivity());
         RealmDatabaseService realm = new RealmDatabaseService();
         realm.createDatabase();
     }
 
-    private void viewsSetup() {
-        SearchView searchView = findViewById(R.id.character_search_view);
-        RecyclerView recyclerView = findViewById(R.id.character_list_recycler_view);
-        CharacterRecyclerViewAdapter adapter = new CharacterRecyclerViewAdapter(this, getAllCharacters());
+    private void viewsSetup(View view) {
+        SearchView searchView = view.findViewById(R.id.character_search_view);
+        RecyclerView recyclerView = view.findViewById(R.id.character_list_recycler_view);
+        CharacterRecyclerViewAdapter adapter = new CharacterRecyclerViewAdapter(getActivity(), getAllCharacters());
 
         setRecyclerView(recyclerView, searchView, adapter);
         setSearchView(searchView, adapter);
@@ -78,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setRecyclerView(RecyclerView recyclerView, final SearchView searchView, CharacterRecyclerViewAdapter adapter) {
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -121,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteDatabase() {
-        Realm.init(this);
+        Realm.init(getActivity());
         Realm.deleteRealm(Realm.getDefaultConfiguration());
     }
 
